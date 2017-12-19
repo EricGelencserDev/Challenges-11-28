@@ -1,0 +1,88 @@
+
+SELECT gnp, surfacearea, name
+
+SELECT
+ surfacearea, name, gnp
+   FROM
+	country
+ ORDER BY
+ surfacearea ASC
+
+LIMIT 10
+
+--
+
+WITH biggestgnp AS (SELECT
+ name, gnp
+ FROM country
+ ORDER BY
+ gnp DESC
+
+LIMIT 10)
+
+
+SELECT
+ name, gnp
+ FROM country
+ ORDER BY
+ gnp DESC
+
+LIMIT 10
+
+--Of the 10 smallest countries which has the biggest gnp
+
+WITH smallestsa AS (SELECT *
+
+ FROM country
+
+ ORDER BY
+ surfacearea ASC
+                  LIMIT 10 )
+
+SELECT
+ surfacearea, name, gnp
+   FROM
+	smallestsa
+ ORDER BY
+ gnp DESC
+
+
+LIMIT 10
+
+--Of the 10 smallest countries which has the biggest per capa gnp
+
+WITH smallestsa AS (SELECT * -- change to largestsa for bigger gnp
+
+ FROM country
+
+ ORDER BY
+ surfacearea ASC -- change to DESC for biggest gnp
+                  LIMIT 10 )
+
+SELECT
+ surfacearea, name, gnp/NullIf(population,0) AS percapitalgnp
+
+   FROM
+	smallestsa --change to largestsa for biggestgnp
+ ORDER BY
+  percapitalgnp DESC
+
+
+LIMIT 10
+
+--what is the sum of the surface area of the 10 biggest and smallest countries in the world
+
+--
+WITH smallestsa AS (SELECT * -- change to largestsa for biggest countries
+
+ FROM country
+
+ ORDER BY
+ surfacearea ASC --change to DESC for biggest countries
+ LIMIT 10 )
+
+SELECT
+SUM(smallestsa.surfacearea) -- change to largestsa for biggest countries
+
+FROM
+	smallestsa --change to largestsa for biggest countries
