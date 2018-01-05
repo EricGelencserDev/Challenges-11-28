@@ -1,0 +1,12 @@
+<h2>My Recipes</h2>
+
+<ul>
+  <% for(let index = 0; index < recipes.length; index++){ %>
+    <% let currentRecipe = recipes[index] %>
+    <li>
+      <a href="/recipe/<%= currentRecipe.get('id') %>">
+        <%= currentRecipe.get('name') %>
+      </a>
+    </li>
+  <% } %>
+</ul>
