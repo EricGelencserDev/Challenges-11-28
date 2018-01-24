@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import Counter from './counter'
 const shipSize = [5,4,3,3,2]; // store ship sizes in an array
-
 class Board extends Component {
     constructor(props){
         super(props)
         this.state = {
             board: [],
+            count: 25
         }
         this.setupBoard()
         this.fiveShips()
@@ -20,10 +21,10 @@ class Board extends Component {
 
     placeShip(ship){ // TODO needs to add vertical ship placement
         var maxCol = 10 - shipSize[ship];
-        var col = Math.floor(Math.random()*maxCol);
+        var col = Math.floor(Math.random()*maxCol); // horrizontal placement
         var row = ship;
         for (var shipSquare = 0;
-          shipSquare < shipSize[ship]; shipSquare++) { this.state.board[col+shipSquare][row] = 1; }
+          shipSquare < shipSize[ship]; shipSquare++) { this.state.board[col+shipSquare][row] = null; }
         }
 
 
@@ -34,37 +35,71 @@ class Board extends Component {
     }
 
     clickHandler(col, row){
-      if(this.state.board[col][row] === 1){
-        this.state.board[col][row] = 0
-          alert('Hit!')
-      }
-      else {
-        this.state.board[col][row]= 'x'
-      }
-      this.setState(this.state)
+        const { board } = this.state
+        if(board[col][row] === null) {
+            board[col][row] = true
+        } else {
+            board[col][row]= ''
+        }
+
+        this.setState({board: board})
+
+        if(this.state.count <= 0) {
+            alert('You lose')
+        } else{
+            this.setState({count: this.state.count-1})
+        }
+
     }
 
 
-    renderRow(rowNumber){
-        var row = []
-        for(var i=0; i < 10; i++){
-            row.push(<td id={`${i}_${rowNumber}`} onClick={this.clickHandler.bind(this, i, rowNumber)}>
-            {this.state.board[i][rowNumber]}</td>)  // forgot to add .bind the on click was being exicuted everytime the row was created
-
+    renderRow(row){
+        const { board } = this.state
+        var set = []
+        for(var col = 0; col < 10; col++){
+            if(board[col][row] === true) {
+                set.push(<td
+                    id={`${col}_${row}`}
+                    className="hit"
+                    onClick={this.clickHandler.bind(this, col, row)}>
+                        {board[col][row]}
+                    </td>)
+            } else if(board[col][row] === '' ){
+                set.push(<td
+                    id={`${col}_${row}`}
+                    className="miss"
+                    onClick={this.clickHandler.bind(this, col, row)}>
+                        {board[col][row]}
+                    </td>)
+            } else{
+                set.push(<td
+                    id={`${col}_${row}`}
+                    className="nada"
+                    onClick={this.clickHandler.bind(this, col, row)}>
+                        {board[col][row]}
+                    </td>)
+            }
         }
-        return (<tr>{row}</tr>)
+
+        return (<tr>{set}</tr>)
     };
 
+
     renderCol() {
+        if (this.state.count == 0) {
+            return <div className="chuck"><div className="loser"></div></div>
+        } else {
+
         var col = []
         for(var i=0; i < 10; i++) {
             col.push(this.renderRow(i))
         }
         return col
-    };
+    }}
+
 
     render() {
-    return (<table>{ this.renderCol() }</table>)
+    return (<div><table>{ this.renderCol() }</table> <h1>Torpedoes: <Counter count={this.state.count}/></h1></div>)
     }
 }
 
